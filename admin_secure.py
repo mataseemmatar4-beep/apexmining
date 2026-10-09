@@ -29,12 +29,12 @@ def build_admin_routes(app, get_db, init_activity_helpers=None):
         db = get_db()
         # إحصائيات
         stats = {
-            "users": db.execute("SELECT COUNT(*) c FROM users").fetchone()["c"],
-            "deposits_total": db.execute("SELECT COALESCE(SUM(amount),0) s FROM deposits WHERE status='approved'").fetchone()["s"],
-            "withdrawals_total": db.execute("SELECT COALESCE(SUM(amount),0) s FROM withdrawals WHERE status='paid'").fetchone()["s"],
-            "pending_deposits": db.execute("SELECT COUNT(*) c FROM deposits WHERE status='pending'").fetchone()["c"],
-            "pending_withdrawals": db.execute("SELECT COUNT(*) c FROM withdrawals WHERE status='pending'").fetchone()["c"],
-            "balance_total": db.execute("SELECT COALESCE(SUM(balance),0) s FROM users").fetchone()["s"],
+            "users": db.execute("SELECT COUNT(*) c FROM users").fetchone()[0],
+            "deposits_total": db.execute("SELECT COALESCE(SUM(amount),0) s FROM deposits WHERE status='approved'").fetchone()[0],
+            "withdrawals_total": db.execute("SELECT COALESCE(SUM(amount),0) s FROM withdrawals WHERE status='paid'").fetchone()[0],
+            "pending_deposits": db.execute("SELECT COUNT(*) c FROM deposits WHERE status='pending'").fetchone()[0],
+            "pending_withdrawals": db.execute("SELECT COUNT(*) c FROM withdrawals WHERE status='pending'").fetchone()[0],
+            "balance_total": db.execute("SELECT COALESCE(SUM(balance),0) s FROM users").fetchone()[0],
         }
         users = db.execute("SELECT * FROM users ORDER BY id DESC LIMIT 100").fetchall()
         deps = db.execute("SELECT d.*, u.email FROM deposits d JOIN users u ON u.id=d.user_id ORDER BY d.id DESC LIMIT 100").fetchall()
