@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% block title %}{{ plan.name }} Plan — ApexMining{% endblock %}
+{% block content %}
+<section class="section"><div class="container narrow">
+<a href="/plans" style="color:var(--muted);font-size:14px">← All Plans</a>
+<h2 class="section-title" style="margin-top:20px">{{ plan.name }}</h2>
+<p class="section-sub">{{ plan.tagline }}</p>
+
+<div class="panel">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;text-align:center">
+    <div><div style="color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px">Price</div><div style="font-size:34px;font-weight:900;color:var(--blue3)">${{ "%.0f"|format(plan.price) }}</div></div>
+    <div><div style="color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px">Daily Return</div><div style="font-size:34px;font-weight:900;color:var(--green)">{{ "%.1f"|format(plan.daily_rate*100) }}%</div></div>
+    <div><div style="color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px">Duration</div><div style="font-size:34px;font-weight:900;color:#fff">{{ plan.duration }}d</div></div>
+    <div><div style="color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px">Hashpower</div><div style="font-size:24px;font-weight:900;color:#fff">{{ plan.hashpower }}</div></div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Contract Features</h2>
+  <ul class="plan-feat">
+    {% for f in plan.features.split('|') %}<li style="font-size:15px;padding:10px 0">{{ f }}</li>{% endfor %}
+  </ul>
+</div>
+
+<div class="panel">
+  <h2>Projected Returns</h2>
+  {% set daily = plan.price * plan.daily_rate %}
+  <table>
+    <tr><th>Period</th><th>Earnings</th><th>Total Value</th></tr>
+    <tr><td>After 1 day</td><td style="color:var(--green)">+${{ "%.2f"|format(daily) }}</td><td>${{ "%.2f"|format(plan.price + daily) }}</td></tr>
+    <tr><td>After 7 days</td><td style="color:var(--green)">+${{ "%.2f"|format(daily*7) }}</td><td>${{ "%.2f"|format(plan.price + daily*7) }}</td></tr>
+    <tr><td>After {{ plan.duration }} days</td><td style="color:var(--green)">+${{ "%.2f"|format(daily*plan.duration) }}</td><td style="color:var(--gold);font-weight:900">${{ "%.2f"|format(plan.price + daily*plan.duration) }}</td></tr>
+  </table>
+</div>
+
+<div style="text-align:center;margin-top:30px">
+  <a href="/register" class="btn btn-primary btn-lg">Get This Plan Now</a>
+</div>
+
+{% if others %}
+<div style="margin-top:60px">
+  <h3 style="color:#fff;text-align:center;margin-bottom:20px">Other Plans</h3>
+  <div class="plans">
+    {% for p in others %}
+    <div class="plan"><h3>{{ p.name }}</h3><div class="plan-price">${{ "%.0f"|format(p.price) }}</div><div class="plan-rate">{{ "%.1f"|format(p.daily_rate*100) }}% daily</div><a href="/plan/{{ p.slug }}" class="btn btn-ghost btn-block">View</a></div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+</div></section>
+{% endblock %}

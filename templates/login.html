@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Login — ApexMining{% endblock %}
+{% block content %}
+<div class="container"><div class="form-card">
+  <h1>Welcome Back</h1>
+  <p class="sub">Login to access your mining dashboard.</p>
+  <form method="post">
+    <div class="field"><label>Email</label><input name="email" type="email" placeholder="you@email.com" required></div>
+    <div class="field"><label>Password</label><input name="password" type="password" placeholder="••••••••" required></div>
+    <button class="btn btn-primary btn-block">Login</button>
+  </form>
+  <div class="form-foot">New here? <a href="/register">Create an account →</a></div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}Create Account — ApexMining{% endblock %}
+{% block content %}
+<div class="container"><div class="form-card">
+  <h1>Create Account</h1>
+  <p class="sub">Start earning daily profits in under 60 seconds.</p>
+  <form method="post">
+    <div class="field"><label>Full Name</label><input name="full_name" placeholder="John Doe"></div>
+    <div class="field"><label>Email</label><input name="email" type="email" placeholder="you@email.com" required></div>
+    <div class="field"><label>Password</label><input name="password" type="password" minlength="4" placeholder="••••••••" required></div>
+    <div class="field"><label>Country</label><input name="country" placeholder="United States"></div>
+    <div class="field"><label>Referral Code (optional)</label><input name="ref" placeholder="APX..."></div>
+    <button class="btn btn-primary btn-block">Create Account & Get $10 Bonus</button>
+  </form>
+  <div class="form-foot">Already have an account? <a href="/login">Login →</a></div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}{{ post.title }} — ApexMining{% endblock %}{% block content %}
+<section class="section"><div class="container narrow">
+<a href="/blog" style="color:var(--muted);font-size:14px">← Back to Blog</a>
+<span class="post-tag" style="margin-top:20px;display:inline-block">{{ post.tag }}</span>
+<h2 class="section-title" style="text-align:left;margin-top:14px">{{ post.title }}</h2>
+<p style="color:var(--muted);margin-bottom:24px">{{ post.created_at[:10] }} · 5 min read</p>
+<img src="{{ post.image }}" style="border-radius:16px;width:100%;margin-bottom:30px">
+<p style="color:var(--text);font-size:17px;line-height:1.9">{{ post.body }}</p>
+{% if recent %}<div style="margin-top:60px;border-top:1px solid var(--border);padding-top:40px">
+<h3 style="color:#fff;margin-bottom:20px">Related Articles</h3>
+<div class="blog-grid">{% for p in recent %}
+<a href="/blog/{{ p.slug }}" class="post-card"><img src="{{ p.image }}"><div class="post-body"><span class="post-tag">{{ p.tag }}</span><h3>{{ p.title }}</h3></div></a>
+{% endfor %}</div></div>{% endif %}
+</div></section>{% endblock %}

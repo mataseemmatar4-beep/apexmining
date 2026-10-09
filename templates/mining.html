@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% block title %}{{ c.name }} Mining — ApexMining{% endblock %}
+{% block content %}
+<section class="hero" style="padding:80px 0 60px;background:linear-gradient(180deg,rgba(59,130,246,.15),transparent)"><div class="container hero-inner" style="text-align:left">
+  <div class="kicker" style="text-align:left">{{ c.algo }} Algorithm</div>
+  <h1 style="font-size:52px">{{ c.name }} Mining</h1>
+  <p class="lead" style="margin-left:0">{{ c.desc }}</p>
+  <div style="display:flex;gap:14px;margin-top:24px;flex-wrap:wrap">
+    <a href="/register" class="btn btn-primary btn-lg">Start Mining {{ c.sym }}</a>
+    <a href="/plans" class="btn btn-ghost btn-lg">View Plans</a>
+  </div>
+</div></section>
+
+<section class="section-sm"><div class="container">
+  <img src="{{ c.img }}" alt="{{ c.name }}" style="border-radius:20px;border:1px solid var(--border);width:100%;max-height:400px;object-fit:cover">
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="kicker">Why Mine {{ c.sym }}</div>
+  <h2 class="section-title">Why {{ c.name }}?</h2>
+  <p class="section-sub">Benefits of mining {{ c.name }} with ApexMining.</p>
+  <div class="grid-3">
+    <div class="feat"><div class="feat-icon">⚡</div><h3>Instant Activation</h3><p>Your {{ c.sym }} contract starts mining within minutes of purchase.</p></div>
+    <div class="feat"><div class="feat-icon">💰</div><h3>{{ c.rate }}</h3><p>Competitive daily returns across all {{ c.sym }} plans.</p></div>
+    <div class="feat"><div class="feat-icon">🔒</div><h3>Secure Wallet</h3><p>Your mined {{ c.sym }} is stored in cold storage until withdrawal.</p></div>
+  </div>
+</div></section>
+
+<section class="section" style="background:var(--bg2)"><div class="container">
+  <h2 class="section-title">Available {{ c.name }} Plans</h2>
+  <div class="plans">
+    {% for p in [] %}{% endfor %}
+  </div>
+  <div style="text-align:center"><a href="/plans" class="btn btn-primary btn-lg">See All Mining Plans</a></div>
+</div></section>
+{% endblock %}

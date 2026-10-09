@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}ApexMining — Earn Up to 2% Daily with Cloud Mining{% endblock %}
+{% block content %}
+
+<section class="hero"><div class="container hero-inner">
+  <div class="hero-badge">Trusted by 48,000+ miners in 190 countries</div>
+  <h1>Earn up to <span class="grad">2% Daily</span><br>from Institutional Cloud Mining</h1>
+  <p class="lead">Mine Bitcoin, Ethereum and Litecoin without hardware. Instant activation, daily payouts, minimum withdrawal just $50. Start in under 60 seconds.</p>
+  <div class="hero-cta">
+    <a href="/register" class="btn btn-primary btn-lg">Start Mining Now →</a>
+    <a href="/plans" class="btn btn-ghost btn-lg">View All Plans</a>
+  </div>
+  <div class="stats-strip">
+    <div class="stat"><span class="stat-num">{{ "{:,}".format(stats.users) }}</span><div class="stat-label">Active Miners</div></div>
+    <div class="stat"><span class="stat-num">${{ "{:,.0f}".format(stats.paid) }}</span><div class="stat-label">Total Paid Out</div></div>
+    <div class="stat"><span class="stat-num">{{ stats.hash }}</span><div class="stat-label">Network Hashrate</div></div>
+    <div class="stat"><span class="stat-num">{{ stats.countries }}+</span><div class="stat-label">Countries Served</div></div>
+  </div>
+</div></section>
+
+<div class="marquee"><div class="marquee-track">
+  <span>BINANCE</span><span>•</span><span>USDT</span><span>•</span><span>VISA</span><span>•</span><span>MASTERCARD</span><span>•</span><span>BITCOIN</span><span>•</span><span>ETHEREUM</span><span>•</span><span>LITECOIN</span><span>•</span>
+  <span>BINANCE</span><span>•</span><span>USDT</span><span>•</span><span>VISA</span><span>•</span><span>MASTERCARD</span><span>•</span><span>BITCOIN</span><span>•</span><span>ETHEREUM</span><span>•</span><span>LITECOIN</span><span>•</span>
+</div></div>
+
+<section class="section"><div class="container">
+  <div class="kicker">What We Mine</div>
+  <h2 class="section-title">Choose Your Cryptocurrency</h2>
+  <p class="section-sub">Industry-leading hashpower across the three most profitable networks.</p>
+  <div class="coin-grid">
+    <a href="/mining/bitcoin" class="coin-card">
+      <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800&q=80" alt="Bitcoin">
+      <div class="coin-body">
+        <h3>Bitcoin Mining</h3>
+        <p>SHA-256 hashpower from our Iceland and Texas facilities. The most established blockchain.</p>
+        <div class="coin-rate">~3.0 – 5.0% daily returns</div>
+      </div>
+    </a>
+    <a href="/mining/ethereum" class="coin-card">
+      <img src="https://images.unsplash.com/photo-1622630998477-20aa696ecb05?w=800&q=80" alt="Ethereum">
+      <div class="coin-body">
+        <h3>Ethereum Mining</h3>
+        <p>Ethash contracts with compounding rewards. Ideal for mid-term investors.</p>
+        <div class="coin-rate">~3.2 – 4.2% daily returns</div>
+      </div>
+    </a>
+    <a href="/mining/litecoin" class="coin-card">
+      <img src="https://images.unsplash.com/photo-1516245834210-c4c142787335?w=800&q=80" alt="Litecoin">
+      <div class="coin-body">
+        <h3>Litecoin Mining</h3>
+        <p>Scrypt mining with fast, reliable daily payouts. Low entry, consistent yield.</p>
+        <div class="coin-rate">~3.1% daily returns</div>
+      </div>
+    </a>
+  </div>
+</div></section>
+
+<section class="section" style="background:var(--bg2)"><div class="container">
+  <div class="kicker">Our Plans</div>
+  <h2 class="section-title">Mining Contracts</h2>
+  <p class="section-sub">All plans include daily automatic payouts. Cancel anytime, no lock-in beyond contract duration.</p>
+  <div class="plans">
+    {% for p in plans %}
+    <div class="plan {% if p.badge=='POPULAR' or p.badge=='BEST VALUE' %}popular{% endif %}">
+      {% if p.badge %}<span class="plan-badge">{{ p.badge }}</span>{% endif %}
+      <h3>{{ p.name }}</h3>
+      <div class="plan-tag">{{ p.tagline[:60] }}</div>
+      <div class="plan-price">${{ "%.0f"|format(p.price) }}</div>
+      <div class="plan-rate">{{ "%.1f"|format(p.daily_rate*100) }}% daily · {{ p.duration }} days</div>
+      <ul class="plan-feat">
+        <li>{{ p.hashpower }} hashpower</li>
+        <li>{{ p.algo }} algorithm</li>
+        <li>Daily automatic payout</li>
+        <li>24/7 monitoring & support</li>
+      </ul>
+      <a href="/plan/{{ p.slug }}" class="btn btn-primary btn-block">View Details</a>
+    </div>
+    {% endfor %}
+  </div>
+  <div style="text-align:center;margin-top:40px"><a href="/plans" class="btn btn-ghost btn-lg">See All 10 Plans →</a></div>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="kicker">Profit Calculator</div>
+  <h2 class="section-title">How Much Could You Earn?</h2>
+  <p class="section-sub">Adjust your investment and see projected returns in real time.</p>
+  <div class="calc">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <span style="color:var(--muted);font-size:15px;font-weight:600">Your Investment</span>
+      <span id="invAmt" style="font-weight:900;color:var(--blue3);font-size:26px;letter-spacing:-1px">$500</span>
+    </div>
+    <input type="range" id="inv" min="50" max="20000" step="50" value="500">
+    <div class="calc-row"><span class="k">Daily profit (1.5%)</span><span class="v" id="daily">$20.00</span></div>
+    <div class="calc-row"><span class="k">Weekly profit</span><span class="v" id="weekly">$140.00</span></div>
+    <div class="calc-row"><span class="k">Monthly profit (30 days)</span><span class="v" id="monthly">$600.00</span></div>
+    <div class="calc-row"><span class="k">Total after 60 days</span><span class="v green" id="total">$1,700.00</span></div>
+  </div>
+</div></section>
+
+<section class="section" style="background:var(--bg2)"><div class="container">
+  <div class="kicker">Why ApexMining</div>
+  <h2 class="section-title">Built for Serious Investors</h2>
+  <p class="section-sub">Every layer engineered for reliability, transparency and returns.</p>
+
+  <div class="img-block">
+    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=900&q=80" alt="Data center">
+    <div>
+      <h3>Institutional-grade infrastructure</h3>
+      <p>Our 12 data centers across the USA, Iceland, Germany and Singapore run on renewable energy and enterprise hardware. Uptime 99.98% guaranteed.</p>
+      <ul>
+        <li>12 global data centers</li>
+        <li>Renewable energy powered</li>
+        <li>Enterprise-grade ASIC miners</li>
+        <li>Real-time monitoring & failover</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="img-block reverse">
+    <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=900&q=80" alt="Cryptocurrency">
+    <div>
+      <h3>Daily payouts, no delays</h3>
+      <p>Profits are credited automatically every 24 hours to your dashboard. Withdraw anytime above $50 with standard processing in 1–3 business days.</p>
+      <ul>
+        <li>Automatic daily payout cycles</li>
+        <li>Minimum withdrawal just $50</li>
+        <li>USDT, BTC, ETH accepted</li>
+        <li>No hidden fees</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="img-block">
+    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=900&q=80" alt="Security">
+    <div>
+      <h3>Bank-level security</h3>
+      <p>Your funds and data are protected by industry-leading measures used by major exchanges and financial institutions.</p>
+      <ul>
+        <li>SSL/TLS encryption across the platform</li>
+        <li>Cold storage for crypto reserves</li>
+        <li>Two-factor authentication support</li>
+        <li>DDoS protection & real-time threat monitoring</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="kicker">Features</div>
+  <h2 class="section-title">Everything You Need to Mine Profitably</h2>
+  <p class="section-sub">A complete platform — from onboarding to withdrawals.</p>
+  <div class="grid-3">
+    <div class="feat"><div class="feat-icon">⚡</div><h3>Instant Activation</h3><p>Contracts go live the moment you confirm. Profits start accruing within 24 hours.</p></div>
+    <div class="feat"><div class="feat-icon">🔒</div><h3>Bank-Grade Security</h3><p>SSL, cold storage, DDoS mitigation and 2FA on every account.</p></div>
+    <div class="feat"><div class="feat-icon">🌍</div><h3>Global Reach</h3><p>Data centers on three continents, serving clients in 190+ countries.</p></div>
+    <div class="feat"><div class="feat-icon">💎</div><h3>Transparent Fees</h3><p>No hidden charges. What you earn is what you keep.</p></div>
+    <div class="feat"><div class="feat-icon">🎯</div><h3>Smart Contracts</h3><p>Automated profit distribution, verified every payout cycle.</p></div>
+    <div class="feat"><div class="feat-icon">🤝</div><h3>24/7 Human Support</h3><p>Real agents on live chat. Average response time under 5 minutes.</p></div>
+  </div>
+</div></section>
+
+<section class="section" style="background:var(--bg2)"><div class="container">
+  <div class="kicker">Testimonials</div>
+  <h2 class="section-title">What Our Miners Say</h2>
+  <p class="section-sub">Verified reviews from active ApexMining clients.</p>
+  <div class="testis">
+    <div class="testi">
+      <div class="testi-head"><div class="testi-av">A</div><div><div class="testi-name">Ahmed M.</div><div class="testi-loc">Egypt · Elite Plan</div></div></div>
+      <div class="stars">★★★★★</div>
+      <div class="testi-body">"4 months with ApexMining. Daily payouts land on schedule, every single day. I withdrew $2,400 last week without any issue."</div>
+    </div>
+    <div class="testi">
+      <div class="testi-head"><div class="testi-av">S</div><div><div class="testi-name">Sarah K.</div><div class="testi-loc">UAE · Pro Plan</div></div></div>
+      <div class="stars">★★★★★</div>
+      <div class="testi-body">"Better than any staking service I've tried. The dashboard is clean, contracts are clear, and withdrawals are fast."</div>
+    </div>
+    <div class="testi">
+      <div class="testi-head"><div class="testi-av">J</div><div><div class="testi-name">John D.</div><div class="testi-loc">USA · Institutional</div></div></div>
+      <div class="stars">★★★★★</div>
+      <div class="testi-body">"Support answered in under 2 minutes at 3 AM. That alone earned my trust. Solid team, solid platform."</div>
+    </div>
+  </div>
+</div></section>
+
+{% if posts %}
+<section class="section"><div class="container">
+  <div class="kicker">Insights</div>
+  <h2 class="section-title">From Our Blog</h2>
+  <p class="section-sub">Guides, market analysis and mining insights from the ApexMining team.</p>
+  <div class="blog-grid">
+    {% for p in posts %}
+    <a href="/blog/{{ p.slug }}" class="post-card">
+      <img src="{{ p.image }}" alt="{{ p.title }}">
+      <div class="post-body">
+        <span class="post-tag">{{ p.tag }}</span>
+        <h3>{{ p.title }}</h3>
+        <p>{{ p.excerpt }}</p>
+        <div class="post-meta">{{ p.created_at[:10] }} · 5 min read</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  <div style="text-align:center;margin-top:40px"><a href="/blog" class="btn btn-ghost">Visit Blog →</a></div>
+</div></section>
+{% endif %}
+
+<section class="section"><div class="container">
+  <div class="cta-band">
+    <h2>Ready to start earning?</h2>
+    <p>Join 48,000+ miners earning daily payouts. Sign up takes under 60 seconds — no credit card required.</p>
+    <a href="/register" class="btn btn-primary btn-lg">Create Free Account</a>
+    <a href="/plans" class="btn btn-ghost btn-lg" style="margin-left:12px">Compare Plans</a>
+  </div>
+</div></section>
+
+{% endblock %}
+{% block scripts %}
+<script>
+const inv=document.getElementById('inv');
+function calc(){
+  const v=+inv.value;
+  const d=v*0.015;
+  document.getElementById('invAmt').textContent='$'+v.toLocaleString();
+  document.getElementById('daily').textContent='$'+d.toFixed(2);
+  document.getElementById('weekly').textContent='$'+(d*7).toFixed(2);
+  document.getElementById('monthly').textContent='$'+(d*30).toFixed(2);
+  document.getElementById('total').textContent='$'+(v+d*60).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+if(inv){inv.addEventListener('input',calc);calc();}
+</script>
+{% endblock %}

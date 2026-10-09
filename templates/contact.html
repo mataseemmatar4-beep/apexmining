@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}Contact — ApexMining{% endblock %}{% block content %}
+<section class="section"><div class="container narrow">
+<div class="kicker">Get in Touch</div>
+<h2 class="section-title">Contact Support</h2>
+<p class="section-sub">We reply within 24 hours — usually much faster.</p>
+<div class="panel">
+<form method="post">
+<div class="field"><label>Full Name</label><input name="name" required></div>
+<div class="field"><label>Email</label><input name="email" type="email" required></div>
+<div class="field"><label>Subject</label><input name="subject"></div>
+<div class="field"><label>Message</label><textarea name="msg" required></textarea></div>
+<button class="btn btn-primary btn-block">Send Message</button>
+</form></div>
+<div class="grid-3" style="margin-top:40px">
+<div class="feat"><div class="feat-icon">📧</div><h3>Email</h3><p>support@apexmining.com</p></div>
+<div class="feat"><div class="feat-icon">💬</div><h3>Live Chat</h3><p>Available 24/7 on the platform</p></div>
+<div class="feat"><div class="feat-icon">🏢</div><h3>HQ</h3><p>London, United Kingdom</p></div>
+</div>
+</div></section>{% endblock %}

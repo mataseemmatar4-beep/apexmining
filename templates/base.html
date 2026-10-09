@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}ApexMining — Institutional Cloud Mining{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+
+<style id="force-en-numbers">
+  html, body { font-family: "Inter","Segoe UI",Roboto,Arial,sans-serif; }
+  .stat-num, .plan-price, .plan-rate, .dash-card .val, .calc-row .v, .addr, code {
+    font-variant-numeric: tabular-nums lining-nums !important;
+    direction: ltr !important;
+    unicode-bidi: isolate !important;
+    font-family: "Inter","Segoe UI",Roboto,Arial,sans-serif !important;
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+</head><body>
+
+<div class="topbar"><div class="topbar-inner">
+  <div class="live">Network Online · Block Height 872,441</div>
+  <div class="tickers">
+    <span>BTC <span class="tick">$94,287 ▲2.4%</span></span>
+    <span>ETH <span class="tick">$3,847 ▲1.8%</span></span>
+    <span>LTC <span class="tick">$142 ▲3.1%</span></span>
+    <span>USDT <span class="tick">$1.00</span></span>
+  </div>
+</div></div>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="/" class="logo"><span class="logo-mark">⛏</span> ApexMining</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/plans">Plans</a>
+    <div class="dd"><a href="/mining/bitcoin">Mining ▾</a>
+      <div class="dd-menu">
+        <a href="/mining/bitcoin">Bitcoin Mining</a>
+        <a href="/mining/ethereum">Ethereum Mining</a>
+        <a href="/mining/litecoin">Litecoin Mining</a>
+      </div>
+    </div>
+    <a href="/pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/partners">Partners</a>
+    <a href="/about">Company</a>
+    <a href="/help">Help</a>
+  </div>
+  <div class="nav-cta">
+    {% if user %}<a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
+    {% else %}<a href="/login" class="btn btn-ghost btn-sm">Login</a>
+    <a href="/register" class="btn btn-primary btn-sm">Get Started</a>{% endif %}
+  </div>
+</div></nav>
+
+<div class="container" style="padding-top:22px">
+{% with m = get_flashed_messages(with_categories=true) %}
+  {% for cat, x in m %}<div class="flash {{cat}}">{{x}}</div>{% endfor %}
+{% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer class="footer"><div class="container">
+  <div class="footer-grid">
+    <div>
+      <div class="logo" style="margin-bottom:16px"><span class="logo-mark">⛏</span> ApexMining</div>
+      <p>ApexMining Ltd is a global cloud mining provider operating 12 data centers across USA, EU and Asia. Registered in England & Wales No. 12844371.</p>
+    </div>
+    <div><h4>Platform</h4><ul>
+      <li><a href="/plans">Mining Plans</a></li>
+      <li><a href="/pricing">Pricing</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/api-docs">API Docs</a></li>
+    </ul></div>
+    <div><h4>Mining</h4><ul>
+      <li><a href="/mining/bitcoin">Bitcoin</a></li>
+      <li><a href="/mining/ethereum">Ethereum</a></li>
+      <li><a href="/mining/litecoin">Litecoin</a></li>
+    </ul></div>
+    <div><h4>Company</h4><ul>
+      <li><a href="/about">About</a></li>
+      <li><a href="/partners">Partners</a></li>
+      <li><a href="/careers">Careers</a></li>
+      <li><a href="/news">News</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul></div>
+    <div><h4>Support</h4><ul>
+      <li><a href="/help">Help Center</a></li>
+      <li><a href="/faq">FAQ</a></li>
+      <li><a href="/status">Status</a></li>
+      <li><a href="/terms">Terms</a></li>
+      <li><a href="/privacy">Privacy</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ApexMining Ltd.</span>
+    <span>London · New York · Singapore</span>
+    <span><a href="/sitemap">Sitemap</a> · <a href="/certificates">Certificates</a></span>
+  </div>
+</div></footer>
+
+<div class="live-feed" id="liveFeed">
+  <span class="live-dot"></span>
+  <span id="liveText">Loading…</span>
+</div>
+
+<script>
+const NAMES=['Ahmed (Egypt)','Sarah (UAE)','John (USA)','Maria (Spain)','Chen (China)','Omar (Morocco)','Lucas (Brazil)','Priya (India)','Ali (Saudi)','Emma (UK)'];
+const ACTS=['purchased an Elite plan','withdrew $847','activated a Pro contract','deposited 500 USDT','bought the Advanced plan','received a $42 daily payout'];
+function showFeed(){
+  const t=document.getElementById('liveText'),f=document.getElementById('liveFeed');
+  if(!t||!f)return;
+  t.textContent=NAMES[Math.floor(Math.random()*NAMES.length)]+' just '+ACTS[Math.floor(Math.random()*ACTS.length)];
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'),5200);
+}
+setTimeout(showFeed,3500);
+setInterval(showFeed,14000);
+</script>
+{% block scripts %}{% endblock %}
+</body></html>

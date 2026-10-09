@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — ApexMining</title><link rel="stylesheet" href="/static/style.css"></head><body>
+<div class="container" style="padding-top:30px">
+<h1 style="color:#fff;margin-bottom:20px">ApexMining Admin</h1>
+<div class="panel"><h2>Users ({{ users|length }})</h2>
+<table><tr><th>ID</th><th>Email</th><th>Balance</th><th>Earned</th><th>Ref By</th><th>Code</th></tr>
+{% for u in users %}<tr><td>{{ u.id }}</td><td>{{ u.email }}</td><td style="color:var(--green)">${{ "%.2f"|format(u.balance) }}</td><td style="color:var(--gold)">${{ "%.2f"|format(u.total_earned) }}</td><td>{{ u.referred_by or '-' }}</td><td>{{ u.referral_code }}</td></tr>{% endfor %}</table></div>
+<div class="panel"><h2>Deposits</h2>
+<table><tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Action</th></tr>
+{% for d in deps %}<tr><td>{{ d.id }}</td><td>{{ d.email }}</td><td>${{ "%.2f"|format(d.amount) }}</td><td>{{ d.method }}</td><td><span class="status {{d.status}}">{{ d.status }}</span></td>
+<td>{% if d.status=='pending' %}<a href="/admin/deposit/{{ d.id }}/approve?pw=apex2026">Approve</a> | <a href="/admin/deposit/{{ d.id }}/reject?pw=apex2026">Reject</a>{% endif %}</td></tr>{% endfor %}</table></div>
+<div class="panel"><h2>Withdrawals</h2>
+<table><tr><th>ID</th><th>User</th><th>Amount</th><th>Tax</th><th>Status</th><th>Action</th></tr>
+{% for w in wds %}<tr><td>{{ w.id }}</td><td>{{ w.email }}</td><td>${{ "%.2f"|format(w.amount) }}</td><td style="color:var(--gold)">${{ "%.2f"|format(w.tax) }}</td><td><span class="status {{w.status}}">{{ w.status }}</span></td>
+<td>{% if w.status=='pending' %}<a href="/admin/withdraw/{{ w.id }}/approve?pw=apex2026">Pay</a> | <a href="/admin/withdraw/{{ w.id }}/reject?pw=apex2026">Reject</a>{% endif %}</td></tr>{% endfor %}</table></div>
+</div></body></html>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block title %}Pricing — ApexMining{% endblock %}{% block content %}
+<section class="section"><div class="container">
+<div class="kicker">Pricing</div>
+<h2 class="section-title">Transparent Pricing</h2>
+<p class="section-sub">No hidden fees. What you earn is what you keep.</p>
+<div class="plans">
+{% for p in plans %}
+<div class="plan {% if p.badge %}popular{% endif %}">
+{% if p.badge %}<span class="plan-badge">{{ p.badge }}</span>{% endif %}
+<h3>{{ p.name }}</h3>
+<div class="plan-price">${{ "%.0f"|format(p.price) }}</div>
+<div class="plan-rate">{{ "%.1f"|format(p.daily_rate*100) }}% daily · {{ p.duration }} days</div>
+<ul class="plan-feat"><li>{{ p.hashpower }}</li><li>{{ p.algo }}</li><li>Daily payouts</li></ul>
+<a href="/plan/{{ p.slug }}" class="btn btn-primary btn-block">View</a>
+</div>{% endfor %}</div>
+<div class="panel" style="margin-top:40px"><h2>Fees Summary</h2>
+<table><tr><th>Service</th><th>Fee</th></tr>
+<tr><td>Account Opening</td><td style="color:var(--green)">Free</td></tr>
+<tr><td>Deposits</td><td style="color:var(--green)">Free</td></tr>
+<tr><td>Withdrawals</td><td>1-3% (network)</td></tr>
+<tr><td>Contract Purchase</td><td style="color:var(--green)">$0</td></tr>
+<tr><td>Referral Payout</td><td>10% of deposit</td></tr></table></div>
+</div></section>{% endblock %}

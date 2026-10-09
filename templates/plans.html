@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block title %}Mining Plans — ApexMining{% endblock %}
+{% block content %}
+<section class="section"><div class="container">
+<div class="kicker">Mining Contracts</div>
+<h2 class="section-title">Choose Your Plan</h2>
+<p class="section-sub">Every contract starts earning within 24 hours. No hidden fees.</p>
+<div class="plans">
+  {% for p in plans %}
+  <div class="plan {% if p.badge=='POPULAR' or p.badge=='BEST VALUE' %}popular{% endif %}">
+    {% if p.badge %}<span class="plan-badge">{{ p.badge }}</span>{% endif %}
+    <h3>{{ p.name }}</h3>
+    <div class="plan-tag">{{ p.tagline }}</div>
+    <div class="plan-price">${{ "%.0f"|format(p.price) }}</div>
+    <div class="plan-rate">{{ "%.1f"|format(p.daily_rate*100) }}% daily · {{ p.duration }} days</div>
+    <ul class="plan-feat">
+      {% for f in p.features.split('|') %}<li>{{ f }}</li>{% endfor %}
+    </ul>
+    <a href="/plan/{{ p.slug }}" class="btn btn-primary btn-block">View Details</a>
+  </div>
+  {% endfor %}
+</div>
+</div></section>
+{% endblock %}

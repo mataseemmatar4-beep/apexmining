@@ -1,0 +1,49 @@
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  full_name TEXT,
+  country TEXT,
+  balance REAL DEFAULT 0,
+  bonus REAL DEFAULT 0,
+  total_earned REAL DEFAULT 0,
+  referral_code TEXT UNIQUE,
+  referred_by TEXT,
+  wallet TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  last_profit TEXT,
+  kyc INTEGER DEFAULT 0,
+  vip INTEGER DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS plans (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT UNIQUE, name TEXT, price REAL, daily_rate REAL, duration INTEGER,
+  hashpower TEXT, algo TEXT, badge TEXT, tagline TEXT, features TEXT, active INTEGER DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS contracts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER, plan_id INTEGER, amount REAL,
+  started_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  expires_at TEXT, earned REAL DEFAULT 0, status TEXT DEFAULT 'active'
+);
+CREATE TABLE IF NOT EXISTS deposits (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER, amount REAL, method TEXT,
+  address TEXT, txid TEXT, status TEXT DEFAULT 'pending',
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS withdrawals (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER, amount REAL, tax REAL, wallet TEXT,
+  status TEXT DEFAULT 'pending', created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS profits (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER, contract_id INTEGER, amount REAL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT UNIQUE, title TEXT, excerpt TEXT, body TEXT,
+  image TEXT, tag TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);

