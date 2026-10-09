@@ -1,0 +1,46 @@
+{% extends "base.html" %}{% block title %}KYC Verification — ApexMining{% endblock %}
+{% block content %}
+<section class="section"><div class="container narrow">
+<div class="kicker">Identity Verification</div>
+<h2 class="section-title">KYC — Verify Your Identity</h2>
+<p class="section-sub">Required before your first withdrawal. All documents are encrypted and stored securely.</p>
+
+<div class="panel">
+  <h2>📋 Why KYC?</h2>
+  <p style="color:var(--muted);line-height:1.8">In compliance with international AML regulations, all users must verify their identity before withdrawing funds. This protects you and the platform from fraud.</p>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+<div class="panel">
+  <h2>1. Government ID (Required)</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Upload a clear photo of your passport, national ID, or driver's license.</p>
+  <div class="field">
+    <label>ID Document Photo</label>
+    <input type="file" name="id_photo" accept="image/*" required>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>2. Payment Card (Required)</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Upload a photo of the card used for your deposit. You may cover the middle 8 digits.</p>
+  <div class="field">
+    <label>Card Photo (Front)</label>
+    <input type="file" name="card_photo" accept="image/*" required>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>3. Selfie with ID (Required)</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Hold your ID next to your face and take a selfie.</p>
+  <div class="field">
+    <label>Selfie</label>
+    <input type="file" name="selfie" accept="image/*" required>
+  </div>
+</div>
+
+<button class="btn btn-primary btn-lg btn-block">Submit for Verification</button>
+</form>
+
+<p style="color:var(--muted2);font-size:12px;text-align:center;margin-top:20px">Verification typically takes 24-48 hours. You will be notified by email.</p>
+</div></section>
+{% endblock %}

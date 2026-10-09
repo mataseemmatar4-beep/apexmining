@@ -4,3 +4,9 @@ __pycache__/
 .env
 venv/
 .venv/
+uploads/*.jpg
+uploads/*.jpeg
+uploads/*.png
+uploads/*.webp
+uploads/*.pdf
+uploads/*.bin

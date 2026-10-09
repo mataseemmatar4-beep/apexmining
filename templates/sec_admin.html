@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ApexMining Control Panel</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+body{background:#0a0e1a;color:#e6edf3;font-family:-apple-system,'Segoe UI',sans-serif;padding:12px}
+.card{background:#131a2e;border:1px solid #1f2a4a;border-radius:12px;padding:16px;margin-bottom:14px}
+h1{color:#f5c542;font-size:20px;margin-bottom:12px}
+h2{color:#60a5fa;font-size:16px;margin:16px 0 10px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi>div{background:#0e1526;border:1px solid #1f2a4a;border-radius:10px;padding:12px;text-align:center}
+.kpi b{display:block;font-size:22px;color:#3ddc84;margin-bottom:4px}
+.kpi span{font-size:11px;color:#8b95b8;text-transform:uppercase}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;border-bottom:1px solid #1f2a4a;margin-bottom:14px}
+.tabs button{padding:8px 14px;background:#131a2e;border:1px solid #1f2a4a;color:#8b95b8;border-radius:8px;font-size:13px;white-space:nowrap;cursor:pointer}
+.tabs button.active{background:#1e40af;color:#fff;border-color:#3b82f6}
+.tab{display:none}
+.tab.active{display:block}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th,td{padding:6px 4px;text-align:left;border-bottom:1px solid #1f2a4a;word-break:break-word}
+th{color:#8b95b8;font-size:10px;text-transform:uppercase}
+input,button,select{padding:8px;background:#0e1526;border:1px solid #1f2a4a;color:#fff;border-radius:6px;font-size:12px}
+button.act{padding:4px 8px;font-size:11px;margin:1px;background:#1e40af;border:none;border-radius:5px;color:#fff}
+button.ok{background:#10b981}button.no{background:#ef4444}button.warn{background:#f59e0b;color:#000}
+.badge{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700}
+.badge.pending{background:#f59e0b;color:#000}
+.badge.approved,.badge.paid{background:#10b981}
+.badge.rejected,.badge.banned{background:#ef4444}
+.ip{font-family:monospace;font-size:10px;color:#8b95b8}
+img.thumb{width:60px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer}
+a.btn{display:inline-block;padding:6px 10px;background:#1e40af;color:#fff;text-decoration:none;border-radius:6px;font-size:11px;margin:2px}
+a.btn.green{background:#10b981}
+</style>
+</head><body>
+
+<div class="card">
+<h1>🎛 ApexMining — Control Panel</h1>
+<div style="font-size:12px;color:#8b95b8">Secret slug: <code>{{ slug }}</code> · key: <code>{{ key }}</code></div>
+</div>
+
+<div class="card">
+<div class="kpi">
+  <div><b>{{ stats.users }}</b><span>Users</span></div>
+  <div><b>${{ "%.0f"|format(stats.balance_total) }}</b><span>Total Balances</span></div>
+  <div><b>${{ "%.0f"|format(stats.deposits_total) }}</b><span>Deposits</span></div>
+  <div><b>${{ "%.0f"|format(stats.withdrawals_total) }}</b><span>Paid Out</span></div>
+  <div><b>{{ stats.pending_deposits }}</b><span>Pending Deps</span></div>
+  <div><b>{{ stats.pending_withdrawals }}</b><span>Pending Wds</span></div>
+</div>
+</div>
+
+<div class="card">
+<div class="tabs">
+  <button class="active" onclick="showTab('users')">👥 Users</button>
+  <button onclick="showTab('deps')">💳 Deposits</button>
+  <button onclick="showTab('wds')">💸 Withdrawals</button>
+  <button onclick="showTab('acts')">📋 Activity</button>
+  <button onclick="showTab('ups')">📁 Uploads</button>
+  <button onclick="showTab('block')">🚫 Blocked IPs</button>
+  <button onclick="showTab('tools')">🛠 Tools</button>
+</div>
+
+<!-- USERS -->
+<div id="users" class="tab active">
+<table>
+<tr><th>ID</th><th>Email</th><th>Name</th><th>Country</th><th>IP</th><th>Balance</th><th>Ref Code</th><th>Wallet</th><th>Actions</th></tr>
+{% for u in users %}
+<tr>
+<td>{{ u.id }}</td>
+<td>{{ u.email }}<br><span class="ip">{{ u.created_at[:10] }}</span></td>
+<td>{{ u.full_name or '-' }}</td>
+<td>{{ u.country or '-' }}</td>
+<td class="ip">{{ u.ip or '-' }}</td>
+<td>${{ "%.2f"|format(u.balance) }}</td>
+<td>{{ u.referral_code }}</td>
+<td class="ip">{{ (u.wallet or '-')[:20] }}</td>
+<td>
+  <form method="post" action="/{{ slug }}/user/{{ u.id }}/balance?k={{ key }}" style="display:inline">
+    <input name="balance" style="width:60px" placeholder="bal">
+    <button class="act">Set</button>
+  </form>
+  <a class="act btn" href="/{{ slug }}/user/{{ u.id }}/ban?k={{ key }}">{% if u.banned %}Unban{% else %}Ban{% endif %}</a>
+  <a class="act btn no" href="/{{ slug }}/user/{{ u.id }}/delete?k={{ key }}" onclick="return confirm('Delete user?')">Del</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- DEPOSITS -->
+<div id="deps" class="tab">
+<table>
+<tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>IP</th><th>Status</th><th>Date</th><th>Action</th></tr>
+{% for d in deps %}
+<tr>
+<td>{{ d.id }}</td><td>{{ d.email }}</td><td>${{ "%.2f"|format(d.amount) }}</td>
+<td>{{ d.method }}</td><td class="ip">{{ d.ip or '-' }}</td>
+<td><span class="badge {{ d.status }}">{{ d.status }}</span></td>
+<td class="ip">{{ d.created_at[:16] }}</td>
+<td>{% if d.status=='pending' %}
+<a class="act btn ok" href="/{{ slug }}/deposit/{{ d.id }}/approve?k={{ key }}">✓</a>
+<a class="act btn no" href="/{{ slug }}/deposit/{{ d.id }}/reject?k={{ key }}">✗</a>
+{% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- WITHDRAWALS -->
+<div id="wds" class="tab">
+<table>
+<tr><th>ID</th><th>User</th><th>Amount</th><th>Tax</th><th>Wallet</th><th>IP</th><th>Status</th><th>Action</th></tr>
+{% for w in wds %}
+<tr>
+<td>{{ w.id }}</td><td>{{ w.email }}</td><td>${{ "%.2f"|format(w.amount) }}</td>
+<td>${{ "%.2f"|format(w.tax) }}</td><td class="ip">{{ w.wallet or '-' }}</td>
+<td class="ip">{{ w.ip or '-' }}</td>
+<td><span class="badge {{ w.status }}">{{ w.status }}</span></td>
+<td>{% if w.status=='pending' %}
+<a class="act btn ok" href="/{{ slug }}/withdraw/{{ w.id }}/approve?k={{ key }}">Pay</a>
+<a class="act btn no" href="/{{ slug }}/withdraw/{{ w.id }}/reject?k={{ key }}">Reject</a>
+{% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- ACTIVITY -->
+<div id="acts" class="tab">
+<table>
+<tr><th>ID</th><th>Email</th><th>Action</th><th>Detail</th><th>IP</th><th>Time</th></tr>
+{% for a in acts %}
+<tr><td>{{ a.id }}</td><td>{{ a.email or '-' }}</td><td>{{ a.action }}</td>
+<td>{{ a.detail or '-' }}</td><td class="ip">{{ a.ip or '-' }}</td>
+<td class="ip">{{ a.created_at[:16] }}</td></tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- UPLOADS -->
+<div id="ups" class="tab">
+<table>
+<tr><th>ID</th><th>User</th><th>Kind</th><th>File</th><th>IP</th><th>Time</th></tr>
+{% for up in uploads %}
+<tr><td>{{ up.id }}</td><td>{{ up.email or '-' }}</td><td>{{ up.kind }}</td>
+<td><a href="/uploads/{{ up.filename }}" target="_blank" class="ip">{{ up.filename }}</a></td>
+<td class="ip">{{ up.ip or '-' }}</td><td class="ip">{{ up.created_at[:16] }}</td></tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- BLOCKED -->
+<div id="block" class="tab">
+<form method="post" action="/{{ slug }}/block-ip?k={{ key }}" style="margin-bottom:12px">
+<input name="ip" placeholder="IP" required>
+<input name="reason" placeholder="Reason">
+<button class="act">Block</button>
+</form>
+<table>
+<tr><th>ID</th><th>IP</th><th>Reason</th><th>Date</th><th>Action</th></tr>
+{% for b in blocked %}
+<tr><td>{{ b.id }}</td><td class="ip">{{ b.ip }}</td><td>{{ b.reason or '-' }}</td>
+<td class="ip">{{ b.created_at[:16] }}</td>
+<td><a class="act btn no" href="/{{ slug }}/unblock-ip/{{ b.id }}?k={{ key }}">Unblock</a></td></tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- TOOLS -->
+<div id="tools" class="tab">
+<h2>Export Data</h2>
+<a class="btn green" href="/{{ slug }}/export/users.csv?k={{ key }}">📥 Users CSV</a>
+<a class="btn green" href="/{{ slug }}/export/deposits.csv?k={{ key }}">📥 Deposits CSV</a>
+<a class="btn green" href="/{{ slug }}/export/withdrawals.csv?k={{ key }}">📥 Withdrawals CSV</a>
+
+<h2>Quick Links</h2>
+<a class="btn" href="/" target="_blank">🌐 Site</a>
+<a class="btn" href="/admin?pw=apex2026" target="_blank">🛠 Old Admin</a>
+</div>
+
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body></html>

