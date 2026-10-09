@@ -3,16 +3,16 @@ DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "apex.db")
 
 PLANS = [
   # slug, name, price, rate, days, hash, algo, badge, tagline, features
-  ("starter","Starter",50,0.030,30,"50 GH/s","SHA-256",None,"Perfect entry-level contract for first-time miners.","Daily auto payout|Instant activation|24/7 monitoring|Email support"),
-  ("advanced","Advanced",200,0.035,45,"250 GH/s","SHA-256","POPULAR","Our most popular plan — best balance of price and returns.","Daily auto payout|Priority activation|24/7 monitoring|Live chat support|Profit compounding"),
-  ("pro","Pro",500,0.040,60,"750 GH/s","SHA-256",None,"Built for serious miners who want higher daily yields.","Daily auto payout|Priority activation|Dedicated account manager|Live chat support|Profit compounding|Early withdrawal"),
-  ("elite","Elite",1500,0.045,90,"2.5 TH/s","SHA-256","BEST VALUE","Maximum returns for committed investors.","Daily auto payout|Instant activation|Dedicated manager|Priority withdrawals|Profit compounding|VIP support"),
-  ("institutional","Institutional",5000,0.050,120,"10 TH/s","SHA-256","VIP","Enterprise-grade hashpower for funds and high-net-worth clients.","All Elite benefits|Custom contract terms|Legal & compliance support|Direct wire deposits|Personal onboarding"),
-  ("eth-starter","ETH Starter",100,0.032,30,"120 MH/s","Ethash",None,"Ethereum mining entry contract.","Daily payout|ETH rewards|Low entry"),
-  ("eth-pro","ETH Pro",800,0.042,60,"1.2 GH/s","Ethash","HOT","High-yield Ethereum contract with compounding.","Daily payout|Compounding|Priority support"),
-  ("ltc-starter","LTC Starter",75,0.031,30,"300 MH/s","Scrypt",None,"Litecoin mining for quick daily payouts.","Daily payout|LTC rewards|Instant start"),
-  ("btc-max","BTC Max",2500,0.048,90,"4 TH/s","SHA-256",None,"High-power Bitcoin contract for maximum daily yield.","Daily payout|Dedicated node|Priority withdrawals"),
-  ("cloud-flex","Cloud Flex",1000,0.038,45,"1 TH/s","SHA-256",None,"Flexible contract — switch algorithms anytime.","Flexible algo|Daily payout|Compounding"),
+  ("starter","Starter",50,0.005,30,"50 GH/s","SHA-256",None,"Perfect entry-level contract for first-time miners.","Daily auto payout|Instant activation|24/7 monitoring|Email support"),
+  ("advanced","Advanced",200,0.006,45,"250 GH/s","SHA-256","POPULAR","Our most popular plan — best balance of price and returns.","Daily auto payout|Priority activation|24/7 monitoring|Live chat support|Profit compounding"),
+  ("pro","Pro",500,0.007,60,"750 GH/s","SHA-256",None,"Built for serious miners who want higher daily yields.","Daily auto payout|Priority activation|Dedicated account manager|Live chat support|Profit compounding|Early withdrawal"),
+  ("elite","Elite",1500,0.008,90,"2.5 TH/s","SHA-256","BEST VALUE","Maximum returns for committed investors.","Daily auto payout|Instant activation|Dedicated manager|Priority withdrawals|Profit compounding|VIP support"),
+  ("institutional","Institutional",5000,0.009,120,"10 TH/s","SHA-256","VIP","Enterprise-grade hashpower for funds and high-net-worth clients.","All Elite benefits|Custom contract terms|Legal & compliance support|Direct wire deposits|Personal onboarding"),
+  ("eth-starter","ETH Starter",100,0.0055,30,"120 MH/s","Ethash",None,"Ethereum mining entry contract.","Daily payout|ETH rewards|Low entry"),
+  ("eth-pro","ETH Pro",800,0.0075,60,"1.2 GH/s","Ethash","HOT","High-yield Ethereum contract with compounding.","Daily payout|Compounding|Priority support"),
+  ("ltc-starter","LTC Starter",75,0.005,30,"300 MH/s","Scrypt",None,"Litecoin mining for quick daily payouts.","Daily payout|LTC rewards|Instant start"),
+  ("btc-max","BTC Max",2500,0.0085,90,"4 TH/s","SHA-256",None,"High-power Bitcoin contract for maximum daily yield.","Daily payout|Dedicated node|Priority withdrawals"),
+  ("cloud-flex","Cloud Flex",1000,0.0065,45,"1 TH/s","SHA-256",None,"Flexible contract — switch algorithms anytime.","Flexible algo|Daily payout|Compounding"),
 ]
 
 POSTS = [

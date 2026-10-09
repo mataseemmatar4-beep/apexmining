@@ -92,7 +92,7 @@
       <span id="invAmt" style="font-weight:900;color:var(--blue3);font-size:26px;letter-spacing:-1px">$500</span>
     </div>
     <input type="range" id="inv" min="50" max="20000" step="50" value="500">
-    <div class="calc-row"><span class="k">Daily profit (1.5%)</span><span class="v" id="daily">$20.00</span></div>
+    <div class="calc-row"><span class="k">Daily profit (0.9%)</span><span class="v" id="daily">$20.00</span></div>
     <div class="calc-row"><span class="k">Weekly profit</span><span class="v" id="weekly">$140.00</span></div>
     <div class="calc-row"><span class="k">Monthly profit (30 days)</span><span class="v" id="monthly">$600.00</span></div>
     <div class="calc-row"><span class="k">Total after 60 days</span><span class="v green" id="total">$1,700.00</span></div>
@@ -221,7 +221,7 @@
 const inv=document.getElementById('inv');
 function calc(){
   const v=+inv.value;
-  const d=v*0.015;
+  const d=v*0.009;
   document.getElementById('invAmt').textContent='$'+v.toLocaleString();
   document.getElementById('daily').textContent='$'+d.toFixed(2);
   document.getElementById('weekly').textContent='$'+(d*7).toFixed(2);
