@@ -1,19 +1,27 @@
-import os, hashlib, secrets
+import os, sys, hashlib, secrets, traceback
 from datetime import datetime, timedelta
 from flask import Flask, request, session, redirect, url_for, render_template, g, flash
-import db as dbmod
-from sqlalchemy import text
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 
-# تهيئة قاعدة البيانات
+# ----- تشخيص شامل -----
+STARTUP_ERROR = None
 try:
+    import db as dbmod
+    from sqlalchemy import text
     dbmod.init_db()
     print("[+] Database initialized")
 except Exception as e:
-    print("[!] DB init failed:", e)
+    STARTUP_ERROR = traceback.format_exc()
+    print("[!] STARTUP ERROR:", e)
+
+@app.errorhandler(500)
+def err500(e):
+    if STARTUP_ERROR:
+        return "<pre style='color:red;padding:20px;font-size:14px'>STARTUP ERROR:\n" + STARTUP_ERROR + "</pre>", 500
+    return "<pre style='color:red;padding:20px'>500 Error: " + str(e) + "</pre>", 500
 
 DEPOSIT_ADDR = "TXk9ApexMiningUSDTx9K2VrQp"
 DAILY_RATE   = 0.03
