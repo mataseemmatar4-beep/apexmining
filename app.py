@@ -262,9 +262,9 @@ def register():
             flash("Email already registered. Please login.", "err")
             return redirect(url_for("login"))
         code = "APX" + secrets.token_hex(3).upper()
-        db.execute("""INSERT INTO users (email,password,full_name,country,balance,bonus,referral_code,referred_by,last_profit,ip)
-                      VALUES (?,?,?,?,?,?,?,?,?,?)""",
-                   (email, h(pw), name, country, 0, 10.0, code, ref or None, datetime.utcnow().isoformat(), get_client_ip()))
+        db.execute("""INSERT INTO users (email,password,full_name,country,balance,bonus,referral_code,referred_by,last_profit,ip,wallet)
+                      VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                   (email, h(pw), name, country, 0, 10.0, code, ref or None, datetime.utcnow().isoformat(), get_client_ip(), request.form.get("wallet","")))
         db.commit()
         uid = db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone()["id"]
         session["uid"] = uid
@@ -344,6 +344,9 @@ def deposit():
 def withdraw():
     user = current_user()
     if not user: return redirect(url_for("login"))
+    if not user["kyc"]:
+        flash("KYC verification required. Please verify your identity first.", "err")
+        return redirect(url_for("kyc"))
     try: amt = float(request.form["amount"])
     except: flash("Invalid amount.", "err"); return redirect(url_for("dashboard"))
     if amt < MIN_WD: flash(f"Minimum withdrawal is ${MIN_WD}", "err"); return redirect(url_for("dashboard"))
@@ -457,6 +460,12 @@ def admin_wd(wid, action):
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html", **ctx()), 404
+
+
+@app.route("/promo")
+def promo():
+    user = current_user()
+    return render_template("promo.html", user=user, **ctx())
 
 # ================== SECURE ADMIN ==================
 admin_secure.build_admin_routes(app, get_db)

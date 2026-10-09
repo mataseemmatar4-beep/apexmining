@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block title %}Earn $50 Per Referral — ApexMining{% endblock %}
+{% block content %}
+<section class="section"><div class="container narrow">
+<div class="kicker">Referral Program</div>
+<h2 class="section-title">Earn $50 for Every Friend</h2>
+<p class="section-sub">When a friend deposits $200 or more, you get $50 instantly credited to your balance.</p>
+
+<div class="panel" style="text-align:center">
+  <div style="font-size:64px;font-weight:900;background:linear-gradient(135deg,#3b82f6,#10b981);-webkit-background-clip:text;background-clip:text;color:transparent">$50</div>
+  <div style="color:var(--muted);margin-bottom:20px">per verified referral</div>
+  {% if user %}
+  <div class="addr">{{ user.referral_code }}</div>
+  <p style="color:var(--muted);font-size:14px">Share this code with friends</p>
+  {% else %}
+  <a href="/register" class="btn btn-primary btn-lg">Create Account to Get Your Code</a>
+  {% endif %}
+</div>
+
+<div class="grid-3">
+  <div class="feat"><div class="feat-icon">1</div><h3>Share your link</h3><p>Send your unique referral code to friends, groups, or social media.</p></div>
+  <div class="feat"><div class="feat-icon">2</div><h3>They sign up</h3><p>Your friend creates an account and deposits at least $200.</p></div>
+  <div class="feat"><div class="feat-icon">3</div><h3>You earn $50</h3><p>Instantly credited to your balance. Withdraw anytime above $50.</p></div>
+</div>
+</div></section>
+{% endblock %}
