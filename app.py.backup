@@ -1,19 +1,11 @@
-import os, hashlib, secrets
+import os, sqlite3, hashlib, secrets
 from datetime import datetime, timedelta
 from flask import Flask, request, session, redirect, url_for, render_template, g, flash
-import db as dbmod
-from sqlalchemy import text
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
+DB = os.path.join(APP_DIR, "apex.db")
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
-
-# تهيئة قاعدة البيانات
-try:
-    dbmod.init_db()
-    print("[+] Database initialized")
-except Exception as e:
-    print("[!] DB init failed:", e)
 
 DEPOSIT_ADDR = "TXk9ApexMiningUSDTx9K2VrQp"
 DAILY_RATE   = 0.03
@@ -21,63 +13,17 @@ REF_RATE     = 0.25
 TAX_RATE     = 0.15
 MIN_WD       = 50.0
 
-class DBAdapter:
-    """يوفر واجهة sqlite-like فوق SQLAlchemy"""
-    def execute(self, sql, params=None):
-        # ترجمة ? إلى :param style لـ SQLAlchemy
-        if params is not None:
-            if isinstance(params, tuple):
-                # ترقيم المعاملات
-                sql2 = sql
-                for i, p in enumerate(params, 1):
-                    sql2 = sql2.replace("?", f":p{i}", 1)
-                params2 = {f"p{i}": p for i, p in enumerate(params, 1)}
-            else:
-                sql2 = sql
-                params2 = params
-        else:
-            sql2 = sql
-            params2 = {}
-        with dbmod.engine.begin() as conn:
-            result = conn.execute(text(sql2), params2)
-            return result
-    def commit(self):
-        pass
-
 def get_db():
     db = getattr(g, "_db", None)
     if db is None:
-        db = g._db = DBAdapter()
+        db = g._db = sqlite3.connect(DB)
+        db.row_factory = sqlite3.Row
     return db
 
 @app.teardown_appcontext
 def close_db(e):
-    pass
-
-
-
-def _row_to_dict(row):
-    if row is None: return None
-    try:
-        return dict(row._mapping)
-    except Exception:
-        return dict(row)
-
-class _RowLike:
-    def __init__(self, d): self._d = d or {}
-    def __getitem__(self, k):
-        v = self._d.get(k)
-        return v
-    def get(self, k, default=None):
-        return self._d.get(k, default)
-    def keys(self): return self._d.keys()
-
-def _fetchone(result):
-    row = result.fetchone()
-    return _RowLike(_row_to_dict(row)) if row else None
-
-def _fetchall(result):
-    return [_RowLike(_row_to_dict(r)) for r in result.fetchall()]
+    db = getattr(g, "_db", None)
+    if db: db.close()
 
 def h(p): return hashlib.sha256(p.encode()).hexdigest()
 
