@@ -6,22 +6,33 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 
-# ----- تشخيص شامل -----
-STARTUP_ERROR = None
+STARTUP_ERROR = "none"
+
+# ----- تشخيص: نمسك كل خطأ -----
 try:
     import db as dbmod
     from sqlalchemy import text
-    dbmod.init_db()
-    print("[+] Database initialized")
+    print("[+] imports OK")
+    try:
+        dbmod.init_db()
+        print("[+] DB initialized")
+    except Exception as e:
+        STARTUP_ERROR = "DB INIT: " + traceback.format_exc()
+        print("[!] DB INIT FAIL:", e)
 except Exception as e:
-    STARTUP_ERROR = traceback.format_exc()
-    print("[!] STARTUP ERROR:", e)
+    STARTUP_ERROR = "IMPORT: " + traceback.format_exc()
+    print("[!] IMPORT FAIL:", e)
 
-@app.errorhandler(500)
-def err500(e):
-    if STARTUP_ERROR:
-        return "<pre style='color:red;padding:20px;font-size:14px'>STARTUP ERROR:\n" + STARTUP_ERROR + "</pre>", 500
-    return "<pre style='color:red;padding:20px'>500 Error: " + str(e) + "</pre>", 500
+# صفحة الفحص — تعرض الحالة
+@app.route("/_diag")
+def diag():
+    return "<pre style='color:red;background:#fff;padding:20px;font-size:12px;direction:ltr'>STARTUP_ERROR:\n\n" + str(STARTUP_ERROR) + "</pre>"
+
+# نلتقط أي خطأ في أي صفحة
+@app.errorhandler(Exception)
+def catch_all(e):
+    tb = traceback.format_exc()
+    return "<pre style='color:red;background:#fff;padding:20px;font-size:11px;direction:ltr'>" + tb + "</pre>", 200
 
 DEPOSIT_ADDR = "TXk9ApexMiningUSDTx9K2VrQp"
 DAILY_RATE   = 0.03
